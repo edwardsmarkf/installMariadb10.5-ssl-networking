@@ -1,0 +1,59 @@
+#! /bin/bash  -w
+
+
+dnf -y update  ;
+
+curl -LsS -O https://downloads.mariadb.com/MariaDB/mariadb_repo_setup  ;
+
+bash mariadb_repo_setup --mariadb-server-version=10.5 ;
+
+dnf --assumeyes install MariaDB-server MariaDB-client MariaDB-backup ;
+systemctl start mariadb.service  ;
+systemctl enable mariadb.service  ;
+
+
+mariadb  <<END ;
+
+
+DROP USER IF EXISTS 'Marky'@'192.168.123.190'                                ;
+
+CREATE USER 'Marky'@'192.168.123.190' IDENTIFIED BY 'Marky'                  ;
+
+GRANT ALL ON `Marky`.* TO 'Marky'@'192.168.123.190'                          \
+IDENTIFIED BY 'Marky' WITH MAX_QUERIES_PER_HOUR 0                            \
+MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0     ;
+
+# DROP DATABASE `Marky`                                                      ;
+CREATE DATABASE IF NOT EXISTS `Marky`                                        ;
+
+GRANT ALL PRIVILEGES ON `Marky`.* TO 'Marky'@'192.168.123.190'               ;
+
+# mysql  --host=192.168.123.190 --user=Marky  --password=Marky    Marky      ;
+
+END
+
+
+## networking!
+
+systemctl  stop  firewalld.service ;
+
+mkdir  /etc/mysql/ssl/ ;
+
+openssl genrsa 2048 > /etc/mysql/ssl/ca-key.pem  ;
+openssl req -new -x509 -nodes -days 365000 -key /etc/mysql/ssl/ca-key.pem -out /etc/mysql/ssl/ca-cert.pem ;
+openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
+openssl rsa -in /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-key.pem  ;
+openssl x509 -req -in server-req.pem -days 365000 -CA /etc/mysql/ssl/ca-cert.pem -CAkey /etc/mysql/ssl/ca-key.pem -set_serial 01 -out /etc/mysql/ssl/server-cert.pem  ;
+openssl verify -CAfile /etc/mysql/ssl/ca-cert.pem /etc/mysql/ssl/server-cert.pem  ;
+
+chmod  755   /etc/mysql/ssl/*.pem ;
+
+cat >> /etc/my.cnf.d/server.cnf  <<END  ;
+ssl-ca=/etc/mysql/ssl/ca-cert.pem
+ssl-cert=/etc/mysql/ssl/server-cert.pem
+ssl-key=/etc/mysql/ssl/server-key.pem
+END
+
+
+systemctl restart mariadb.service  ;
+
