@@ -18,6 +18,8 @@ systemctl enable mariadb.service  ;
 
 mariadb  <<END ;
 
+## from http://edwardsmark.com/php/createDb.php?dbName=Marky&&&dbUser=Marky
+
 DROP USER IF EXISTS 'Marky'@'192.168.123.190'                                ;
 
 CREATE USER 'Marky'@'192.168.123.190' IDENTIFIED BY 'Marky'                  ;
