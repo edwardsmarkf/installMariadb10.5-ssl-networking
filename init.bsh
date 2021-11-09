@@ -1,7 +1,9 @@
 #! /bin/bash  -w
 
 
-dnf -y update  ;
+dnf --assumeyes update  ;
+
+dnf --assumeyes  install expect ;
 
 curl -LsS -O https://downloads.mariadb.com/MariaDB/mariadb_repo_setup  ;
 
