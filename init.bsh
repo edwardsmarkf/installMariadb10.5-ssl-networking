@@ -42,7 +42,46 @@ systemctl  stop  firewalld.service ;
 mkdir  /etc/mysql/ssl/ ;
 
 openssl genrsa 2048 > /etc/mysql/ssl/ca-key.pem  ;
-openssl req -new -x509 -nodes -days 365000 -key /etc/mysql/ssl/ca-key.pem -out /etc/mysql/ssl/ca-cert.pem ;
+
+expect <(cat <<'END'
+        ##      creates a service:      messages  (all the defaults)
+        ##      written from:   https://docs.feathersjs.com/guides/chat/service.html
+
+        set timeout -1
+
+        set UPARROW     \x1B\[A;
+        set DOWNARROW   \x1B\[B;
+        set SPACE       \x20;
+        set RETURN      \x0d;
+                
+        spawn   openssl req -new -x509 -nodes -days 365000 -key /etc/mysql/ssl/ca-key.pem -out /etc/mysql/ssl/ca-cert.pem ;
+
+        expect  -exact "Country Name (2 letter code) \[XX]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "State or Province Name (full name) \[]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "Locality Name (eg, city) \[Default City]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "Organization Name (eg, company) \[Default Company Ltd]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "Organizational Unit Name (eg, section) \[]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "Common Name (eg, your name or your server's hostname) \[]:"
+        send    -- "One${RETURN}"
+
+        expect  -exact "Email Address \[]:"
+        send    -- "${RETURN}"
+
+        expect eof
+END
+)       ## end of expect
+
+
 openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
 openssl rsa -in /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-key.pem  ;
 openssl x509 -req -in server-req.pem -days 365000 -CA /etc/mysql/ssl/ca-cert.pem -CAkey /etc/mysql/ssl/ca-key.pem -set_serial 01 -out /etc/mysql/ssl/server-cert.pem  ;
