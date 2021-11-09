@@ -1,11 +1,14 @@
 #! /bin/bash  -w
 
-#       2021-11-09       script to install MariaDB 10.5 including the ssl shit
+##       2021-11-09       script to install MariaDB 10.5 including the ssl shit
 
 
 dnf --assumeyes update  ;
 
 dnf --assumeyes  install expect ;
+
+
+##  https://computingforgeeks.com/install-mariadb-on-centos-7-centos-8/
 
 curl -LsS -O https://downloads.mariadb.com/MariaDB/mariadb_repo_setup  ;
 
@@ -14,6 +17,7 @@ bash mariadb_repo_setup --mariadb-server-version=10.5 ;
 dnf --assumeyes install MariaDB-server MariaDB-client MariaDB-backup ;
 systemctl start mariadb.service  ;
 systemctl enable mariadb.service  ;
+
 
 
 mariadb  <<END ;
@@ -39,6 +43,8 @@ END
 
 
 ## networking!
+
+##   https://www.cyberciti.biz/faq/how-to-setup-mariadb-ssl-and-secure-connections-from-clients/
 
 systemctl  stop  firewalld.service ;
 
