@@ -1,5 +1,7 @@
 #! /bin/bash  -w
 
+#       2021-11-09       script to install MariaDB 10.5 including the ssl shit
+
 
 dnf --assumeyes update  ;
 
@@ -15,7 +17,6 @@ systemctl enable mariadb.service  ;
 
 
 mariadb  <<END ;
-
 
 DROP USER IF EXISTS 'Marky'@'192.168.123.190'                                ;
 
