@@ -3,6 +3,12 @@
 ##       2021-11-09       script to install MariaDB 10.5 including the ssl shit
 
 
+
+IP_NBR='192.168.123.190'                ;
+DB_NAME='Marky'                         ;
+DB_USER='Marky'                         ;
+DB_PASS='Marky'                         ;
+
 dnf --assumeyes update  ;
 
 dnf --assumeyes  install expect ;
@@ -24,20 +30,20 @@ mariadb --verbose  <<END   ;
 
 ## from http://edwardsmark.com/php/createDb.php?dbName=Marky&&&dbUser=Marky
 
-DROP USER IF EXISTS 'Marky'@'192.168.123.190'                                ;
+DROP USER IF EXISTS '${DB_USER}'@'${IP_NBR}'                                     ;
 
-CREATE USER 'Marky'@'192.168.123.190' IDENTIFIED BY 'Marky'                  ;
+CREATE USER '${DB_USER}'@'${IP_NBR}' IDENTIFIED BY ${DB_PASS}'                   ;
 
-GRANT ALL ON \`Marky\`.* TO 'Marky'@'192.168.123.190'                        \
-IDENTIFIED BY 'Marky' WITH MAX_QUERIES_PER_HOUR 0                            \
-MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0     ;
+GRANT ALL ON \${DB_USER}\`.* TO '${DB_USER}'@'${IP_NBR}'                         \
+IDENTIFIED BY '=${DB_PASS}' WITH MAX_QUERIES_PER_HOUR 0                          \
+MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0         ;
 
-# DROP DATABASE \`Marky\`                                                    ;
-CREATE DATABASE IF NOT EXISTS \`Marky\`                                      ;
+# DROP DATABASE \`${DB_NAME}\`                                                   ;
+CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`                                     ;
 
-GRANT ALL PRIVILEGES ON \`Marky\`.* TO 'Marky'@'192.168.123.190'             ;
+GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'${IP_NBR}'             ;
 
-# mysql  --host=192.168.123.190 --user=Marky  --password=Marky    Marky      ;
+# mysql  --host=${IP_NBR} --user=${DB_USER}  --password=${DB_PASS}    ${DB_NAME} ;
 
 END
 
