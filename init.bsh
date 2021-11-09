@@ -20,7 +20,7 @@ systemctl enable mariadb.service  ;
 
 
 
-mariadb  <<END ;
+mariadb --verbose  <<END   ;
 
 ## from http://edwardsmark.com/php/createDb.php?dbName=Marky&&&dbUser=Marky
 
@@ -28,14 +28,14 @@ DROP USER IF EXISTS 'Marky'@'192.168.123.190'                                ;
 
 CREATE USER 'Marky'@'192.168.123.190' IDENTIFIED BY 'Marky'                  ;
 
-GRANT ALL ON `Marky`.* TO 'Marky'@'192.168.123.190'                          \
+GRANT ALL ON \`Marky\`.* TO 'Marky'@'192.168.123.190'                        \
 IDENTIFIED BY 'Marky' WITH MAX_QUERIES_PER_HOUR 0                            \
 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0     ;
 
-# DROP DATABASE `Marky`                                                      ;
-CREATE DATABASE IF NOT EXISTS `Marky`                                        ;
+# DROP DATABASE \`Marky\`                                                    ;
+CREATE DATABASE IF NOT EXISTS \`Marky\`                                      ;
 
-GRANT ALL PRIVILEGES ON `Marky`.* TO 'Marky'@'192.168.123.190'               ;
+GRANT ALL PRIVILEGES ON \`Marky\`.* TO 'Marky'@'192.168.123.190'             ;
 
 # mysql  --host=192.168.123.190 --user=Marky  --password=Marky    Marky      ;
 
