@@ -81,7 +81,7 @@ expect <(cat <<'END'
         set RETURN      \x0d;
                 
         #spawn   openssl req -new -x509 -nodes -days 365000 -key $ENV('SSL_DIR')/ca-key.pem -out /etc/mysql/ssl/ca-cert.pem ;
-        spawn   openssl req -new -x509 -nodes -days 365000 -key $ENV('SSL_DIR')/ca-key.pem -out $ENV('SSL_DIR')/ca-cert.pem ;
+        spawn   openssl req -new -x509 -nodes -days 365000 -key $env(SSL_DIR)/ca-key.pem -out $env(SSL_DIR)/ca-cert.pem ;
 
 
         expect  -exact "Country Name (2 letter code) \[XX]:"
@@ -122,7 +122,9 @@ expect <(cat <<'END'
         set SPACE       \x20;
         set RETURN      \x0d;
                 
-        spawn   openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
+        ##spawn   openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
+        spawn   openssl req -newkey rsa:2048 -days 365000 -nodes -keyout  $env(SSL_DIR)/server-key.pem -out  $env(SSL_DIR)/server-req.pem  ;
+
 
         expect  -exact "Country Name (2 letter code) \[XX]:"
         send    -- "${RETURN}"
