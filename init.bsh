@@ -171,7 +171,9 @@ END
 
 tail -10   ${MARIADB_CNF}  ;
 
-systemctl restart mariadb.service  ;
+systemctl stop    mariadb.service  ;
+systemctl start   mariadb.service  ;
+systemctl status  mariadb.service  ;
 
 
 
