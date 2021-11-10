@@ -156,11 +156,14 @@ expect <(cat <<'END'
         expect eof
 END
 )       ## end of expect
-openssl rsa -in /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-key.pem  ;
-openssl x509 -req -in server-req.pem -days 365000 -CA /etc/mysql/ssl/ca-cert.pem -CAkey /etc/mysql/ssl/ca-key.pem -set_serial 01 -out /etc/mysql/ssl/server-cert.pem  ;
-openssl verify -CAfile /etc/mysql/ssl/ca-cert.pem /etc/mysql/ssl/server-cert.pem  ;
 
-chmod  755   /etc/mysql/ssl/*.pem ;
+##openssl rsa -in ${SSL_DIR}/server-key.pem -out /etc/mysql/ssl/server-key.pem  ;
+openssl rsa -in ${SSL_DIR}/server-key.pem -out ${SSL_DIR}/server-key.pem  ;
+
+openssl x509 -req -in ${SSL_DIR}/server-req.pem -days 365000 -CA ${SSL_DIR}/ca-cert.pem -CAkey ${SSL_DIR}/ca-key.pem -set_serial 01 -out ${SSL_DIR}/server-cert.pem  ;
+openssl verify -CAfile ${SSL_DIR}/ca-cert.pem ${SSL_DIR}/server-cert.pem  ;
+
+chmod  --verbose 755   ${SSL_DIR}/*.pem ;
 
 cat >> /etc/my.cnf.d/server.cnf  <<END  ;
 ssl-ca=/etc/mysql/ssl/ca-cert.pem
