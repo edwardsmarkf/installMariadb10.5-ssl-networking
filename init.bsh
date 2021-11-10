@@ -9,8 +9,8 @@ DB_NAME='Marky'                         ;
 DB_USER='Marky'                         ;
 DB_PASS='Marky'                         ;
 
-GENRSA_VAL=2048                         ;
-
+   ## export is required for expect calls!
+export GENRSA_VAL=2048                  ;
 export SSL_DIR='/etc/mysql/ssl/'        ;
 
 MARIADB_CNF='/etc/my.cnf.d/server.cnf'  ;
@@ -129,7 +129,7 @@ expect <(cat <<'END'
         set RETURN      \x0d;
                 
         ##spawn   openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
-        spawn   /usr/bin/openssl req -newkey rsa:${GENRSA_VAL} -days 365000 -nodes -keyout  $env(SSL_DIR)/server-key.pem -out  $env(SSL_DIR)/server-req.pem  ;
+        spawn   /usr/bin/openssl req -newkey rsa:$env(GENRSA_VAL) -days 365000 -nodes -keyout  $env(SSL_DIR)/server-key.pem -out  $env(SSL_DIR)/server-req.pem  ;
 
 
         expect  -exact "Country Name (2 letter code) \[XX]:"
