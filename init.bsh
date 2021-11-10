@@ -144,10 +144,10 @@ expect <(cat <<'END'
         expect  -exact "Email Address \[]:"
         send    -- "${RETURN}"
 
-        expect  -exact "A challenge password []:"
+        expect  -regex ".*A challenge password.*"
         send    -- "${RETURN}"
         
-        expect  -exact "An optional company name []:"
+        expect  -regex ".*An optional company name.*"
         send    -- "${RETURN}"
 
         expect eof
