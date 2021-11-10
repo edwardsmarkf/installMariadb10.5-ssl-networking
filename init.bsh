@@ -61,8 +61,6 @@ END
         ## be SURE "Common names" are different!
 
 
-export ${SSL_DIR};
-
 systemctl  stop  firewalld.service ;
 
 mkdir --verbose --parent ${SSL_DIR} ;
