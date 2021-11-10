@@ -4,6 +4,8 @@
 
 
 
+MARIADB_VERSION=10.5                    ;
+
 IP_NBR='192.168.123.190'                ;
 DB_NAME='Marky'                         ;
 DB_USER='Marky'                         ;
@@ -24,7 +26,7 @@ dnf --assumeyes  install expect ;
 
 curl -LsS -O https://downloads.mariadb.com/MariaDB/mariadb_repo_setup  ;
 
-bash mariadb_repo_setup --mariadb-server-version=10.5 ;
+bash mariadb_repo_setup --mariadb-server-version=${MARIADB_VERSION} ;
 
 dnf --assumeyes install MariaDB-server MariaDB-client MariaDB-backup ;
 
