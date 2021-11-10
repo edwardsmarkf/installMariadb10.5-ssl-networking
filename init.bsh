@@ -33,7 +33,7 @@ mariadb --verbose  <<END   ;
 
     DROP USER IF EXISTS '${DB_USER}'@'${IP_NBR}'                                     ;
 
-    CREATE USER '${DB_USER}'@'${IP_NBR}' IDENTIFIED BY ${DB_PASS}'                   ;
+    CREATE USER '${DB_USER}'@'${IP_NBR}' IDENTIFIED BY '${DB_PASS}'                  ;
 
     GRANT ALL ON \${DB_USER}\`.* TO '${DB_USER}'@'${IP_NBR}'                         \
     IDENTIFIED BY '=${DB_PASS}' WITH MAX_QUERIES_PER_HOUR 0                          \
