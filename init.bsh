@@ -11,6 +11,7 @@ DB_PASS='Marky'                         ;
 
 export SSL_DIR='/etc/mysql/ssl/'        ;
 
+MARIADB_CNF='/etc/my.cnf.d/server.cnf'  ;
 
 dnf --assumeyes update  ;
 
@@ -162,12 +163,13 @@ openssl verify -CAfile ${SSL_DIR}/ca-cert.pem ${SSL_DIR}/server-cert.pem  ;
 
 chmod  --verbose 755   ${SSL_DIR}/*.pem ;
 
-cat >> /etc/my.cnf.d/server.cnf  <<END  ;
-ssl-ca=/etc/mysql/ssl/ca-cert.pem
-ssl-cert=/etc/mysql/ssl/server-cert.pem
-ssl-key=/etc/mysql/ssl/server-key.pem
+cat >> ${MARIADB_CNF}  <<END  ;
+ssl-ca=${SSL_DIR}/ca-cert.pem
+ssl-cert=${SSL_DIR}/server-cert.pem
+ssl-key=${SSL_DIR}ssl/server-key.pem
 END
 
+tail -10   ${MARIADB_CNF}  ;
 
 systemctl restart mariadb.service  ;
 
