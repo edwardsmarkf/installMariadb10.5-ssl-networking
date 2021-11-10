@@ -26,9 +26,10 @@ bash mariadb_repo_setup --mariadb-server-version=10.5 ;
 
 dnf --assumeyes install MariaDB-server MariaDB-client MariaDB-backup ;
 
-systemctl start mariadb.service  ;
-systemctl enable mariadb.service  ;
 
+systemctl start   mariadb.service  ;
+systemctl status  mariadb.service  ;
+systemctl enable  mariadb.service  ;
 
 
 mariadb --verbose  <<END   ;
