@@ -9,6 +9,8 @@ DB_NAME='Marky'                         ;
 DB_USER='Marky'                         ;
 DB_PASS='Marky'                         ;
 
+GENRSA_VAL=2048                         ;
+
 export SSL_DIR='/etc/mysql/ssl/'        ;
 
 MARIADB_CNF='/etc/my.cnf.d/server.cnf'  ;
@@ -71,7 +73,7 @@ firewall-cmd --permanent --zone=public --add-port=3306/tcp     ;
 
 mkdir --verbose --parent ${SSL_DIR} ;
 
-openssl genrsa 2048    >     ${SSL_DIR}/ca-key.pem      ;
+/usr/bin/openssl genrsa ${GENRSA_VAL}    >     ${SSL_DIR}/ca-key.pem      ;
 
 expect <(cat <<'END'
         ##      creates a service:      messages  (all the defaults)
@@ -127,7 +129,7 @@ expect <(cat <<'END'
         set RETURN      \x0d;
                 
         ##spawn   openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
-        spawn   /usr/bin/openssl req -newkey rsa:2048 -days 365000 -nodes -keyout  $env(SSL_DIR)/server-key.pem -out  $env(SSL_DIR)/server-req.pem  ;
+        spawn   /usr/bin/openssl req -newkey rsa:${GENRSA_VAL} -days 365000 -nodes -keyout  $env(SSL_DIR)/server-key.pem -out  $env(SSL_DIR)/server-req.pem  ;
 
 
         expect  -exact "Country Name (2 letter code) \[XX]:"
