@@ -115,3 +115,16 @@ END
 
 systemctl restart mariadb.service  ;
 
+
+
+mariadb --verbose  <<END   ;
+
+    SHOW VARIABLES LIKE '%ssl%';
+
+    status ;
+
+END
+
+exit;
+
+#
