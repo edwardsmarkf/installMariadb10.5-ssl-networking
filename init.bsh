@@ -8,6 +8,10 @@ IP_NBR='192.168.123.190'                ;
 DB_NAME='Marky'                         ;
 DB_USER='Marky'                         ;
 DB_PASS='Marky'                         ;
+SSL_DIR='/etc/mysql/ssl/'               ;
+
+export ${SSL_DIR}; ## for expect
+
 
 dnf --assumeyes update  ;
 
@@ -54,12 +58,16 @@ END
 ##   https://www.cyberciti.biz/faq/how-to-setup-mariadb-ssl-and-secure-connections-from-clients/
 
 ##   https://stackoverflow.com/questions/19726138/openssl-error-18-at-0-depth-lookupself-signed-certificate
+        ## be SURE "Common names" are different!
+
+
+export ${SSL_DIR};
 
 systemctl  stop  firewalld.service ;
 
-mkdir --verbose --parent /etc/mysql/ssl/ ;
+mkdir --verbose --parent ${SSL_DIR} ;
 
-openssl genrsa 2048    >     /etc/mysql/ssl/ca-key.pem      ;
+openssl genrsa 2048    >     ${SSL_DIR}/ca-key.pem      ;
 
 expect <(cat <<'END'
         ##      creates a service:      messages  (all the defaults)
@@ -72,7 +80,9 @@ expect <(cat <<'END'
         set SPACE       \x20;
         set RETURN      \x0d;
                 
-        spawn   openssl req -new -x509 -nodes -days 365000 -key /etc/mysql/ssl/ca-key.pem -out /etc/mysql/ssl/ca-cert.pem ;
+        #spawn   openssl req -new -x509 -nodes -days 365000 -key $ENV('SSL_DIR')/ca-key.pem -out /etc/mysql/ssl/ca-cert.pem ;
+        spawn   openssl req -new -x509 -nodes -days 365000 -key $ENV('SSL_DIR')/ca-key.pem -out $ENV('SSL_DIR')/ca-cert.pem ;
+
 
         expect  -exact "Country Name (2 letter code) \[XX]:"
         send    -- "${RETURN}"
@@ -100,7 +110,44 @@ END
 )       ## end of expect
 
 
-openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
+###
+expect <(cat <<'END'
+        ##      creates a service:      messages  (all the defaults)
+        ##      written from:   https://docs.feathersjs.com/guides/chat/service.html
+
+        set timeout -1
+
+        set UPARROW     \x1B\[A;
+        set DOWNARROW   \x1B\[B;
+        set SPACE       \x20;
+        set RETURN      \x0d;
+                
+        spawn   openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
+
+        expect  -exact "Country Name (2 letter code) \[XX]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "State or Province Name (full name) \[]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "Locality Name (eg, city) \[Default City]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "Organization Name (eg, company) \[Default Company Ltd]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "Organizational Unit Name (eg, section) \[]:"
+        send    -- "${RETURN}"
+
+        expect  -exact "Common Name (eg, your name or your server's hostname) \[]:"
+        send    -- "Two${RETURN}"
+
+        expect  -exact "Email Address \[]:"
+        send    -- "${RETURN}"
+
+        expect eof
+END
+)       ## end of expect
 openssl rsa -in /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-key.pem  ;
 openssl x509 -req -in server-req.pem -days 365000 -CA /etc/mysql/ssl/ca-cert.pem -CAkey /etc/mysql/ssl/ca-key.pem -set_serial 01 -out /etc/mysql/ssl/server-cert.pem  ;
 openssl verify -CAfile /etc/mysql/ssl/ca-cert.pem /etc/mysql/ssl/server-cert.pem  ;
