@@ -173,9 +173,9 @@ END
 chmod  --verbose 755   ${SSL_DIR}/*.pem ;
 
 cat >> ${MARIADB_CNF}  <<END  ;
-ssl-ca=${SSL_DIR}/ca-cert.pem
-ssl-cert=${SSL_DIR}/server-cert.pem
-ssl-key=${SSL_DIR}ssl/server-key.pem
+ssl-ca=${SSL_DIR}ca-cert.pem
+ssl-cert=${SSL_DIR}server-cert.pem
+ssl-key=${SSL_DIR}server-key.pem
 END
 
 tail -10   ${MARIADB_CNF}  ;
