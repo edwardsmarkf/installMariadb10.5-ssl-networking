@@ -62,7 +62,12 @@ END
         ## be SURE "Common names" are different!
 
 
-systemctl  stop  firewalld.service ;
+      ## systemctl  stop  firewalld.service ;
+      ## https://firewalld.org/documentation/howto/open-a-port-or-service.html
+      
+#firewall-cmd             --zone=public --add-port=3306/tcp     ;
+firewall-cmd --permanent --zone=public --add-port=3306/tcp     ;
+
 
 mkdir --verbose --parent ${SSL_DIR} ;
 
@@ -80,7 +85,7 @@ expect <(cat <<'END'
         set RETURN      \x0d;
                 
         #spawn   openssl req -new -x509 -nodes -days 365000 -key $ENV('SSL_DIR')/ca-key.pem -out /etc/mysql/ssl/ca-cert.pem ;
-        spawn   openssl req -new -x509 -nodes -days 365000 -key $env(SSL_DIR)/ca-key.pem -out $env(SSL_DIR)/ca-cert.pem ;
+        spawn   /usr/bin/openssl req -new -x509 -nodes -days 365000 -key $env(SSL_DIR)/ca-key.pem -out $env(SSL_DIR)/ca-cert.pem ;
 
 
         expect  -exact "Country Name (2 letter code) \[XX]:"
@@ -122,7 +127,7 @@ expect <(cat <<'END'
         set RETURN      \x0d;
                 
         ##spawn   openssl req -newkey rsa:2048 -days 365000 -nodes -keyout /etc/mysql/ssl/server-key.pem -out /etc/mysql/ssl/server-req.pem  ;
-        spawn   openssl req -newkey rsa:2048 -days 365000 -nodes -keyout  $env(SSL_DIR)/server-key.pem -out  $env(SSL_DIR)/server-req.pem  ;
+        spawn   /usr/bin/openssl req -newkey rsa:2048 -days 365000 -nodes -keyout  $env(SSL_DIR)/server-key.pem -out  $env(SSL_DIR)/server-req.pem  ;
 
 
         expect  -exact "Country Name (2 letter code) \[XX]:"
@@ -157,10 +162,11 @@ END
 )       ## end of expect
 
 ##openssl rsa -in ${SSL_DIR}/server-key.pem -out /etc/mysql/ssl/server-key.pem  ;
-openssl rsa -in ${SSL_DIR}/server-key.pem -out ${SSL_DIR}/server-key.pem  ;
+/usr/bin/openssl rsa -in ${SSL_DIR}/server-key.pem -out ${SSL_DIR}/server-key.pem  ;
 
-openssl x509 -req -in ${SSL_DIR}/server-req.pem -days 365000 -CA ${SSL_DIR}/ca-cert.pem -CAkey ${SSL_DIR}/ca-key.pem -set_serial 01 -out ${SSL_DIR}/server-cert.pem  ;
-openssl verify -CAfile ${SSL_DIR}/ca-cert.pem ${SSL_DIR}/server-cert.pem  ;
+/usr/bin/openssl x509 -req -in ${SSL_DIR}/server-req.pem -days 365000 -CA ${SSL_DIR}/ca-cert.pem -CAkey ${SSL_DIR}/ca-key.pem -set_serial 01 -out ${SSL_DIR}/server-cert.pem  ;
+
+/usr/bin/openssl verify -CAfile ${SSL_DIR}/ca-cert.pem ${SSL_DIR}/server-cert.pem  ;
 
 chmod  --verbose 755   ${SSL_DIR}/*.pem ;
 
