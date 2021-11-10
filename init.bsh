@@ -8,9 +8,8 @@ IP_NBR='192.168.123.190'                ;
 DB_NAME='Marky'                         ;
 DB_USER='Marky'                         ;
 DB_PASS='Marky'                         ;
-SSL_DIR='/etc/mysql/ssl/'               ;
 
-export ${SSL_DIR}; ## for expect
+export SSL_DIR='/etc/mysql/ssl/'        ;
 
 
 dnf --assumeyes update  ;
