@@ -54,9 +54,9 @@ END
 
 systemctl  stop  firewalld.service ;
 
-mkdir  /etc/mysql/ssl/ ;
+mkdir --verbose --parent /etc/mysql/ssl/ ;
 
-openssl genrsa 2048 > /etc/mysql/ssl/ca-key.pem  ;
+openssl genrsa 2048    >     /etc/mysql/ssl/ca-key.pem      ;
 
 expect <(cat <<'END'
         ##      creates a service:      messages  (all the defaults)
